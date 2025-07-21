@@ -1,0 +1,109 @@
+package com.example.xhs
+
+class NoteRepository {
+    // 模拟网络请求获取数据
+    fun getNotes(page: Int): List<NoteItem> {
+        return listOf(
+            // 竖图示例 (3:4)
+            NoteItem(
+                id = 1,
+                "https://gips3.baidu.com/it/u=2164025718,1883077975&fm=3028&app=3028&f=PNG&fmt=auto&q=75&size=f271_270",
+                "春日野餐攻略",
+                "https://img2.baidu.com/it/u=586058312,1869204209&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=600",
+                "旅行达人",
+                true,
+            ),
+            NoteItem(
+                id = 2,
+                "https://img2.baidu.com/it/u=586058312,1869204209&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=600",
+                "咖啡拉花教程",
+                "https://img2.baidu.com/it/u=586058312,1869204209&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=600",
+                "咖啡爱好者",
+                true,
+            ),
+            NoteItem(
+                id = 3,
+                "https://img2.baidu.com/it/u=586058312,1869204209&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=600",
+                "咖啡拉花教程",
+                "https://img2.baidu.com/it/u=586058312,1869204209&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=600",
+                "咖啡爱好者",
+                true,
+            ),
+            NoteItem(
+                id = 4,
+                "https://img2.baidu.com/it/u=586058312,1869204209&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=600",
+                "咖啡拉花教程",
+                "https://img2.baidu.com/it/u=586058312,1869204209&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=600",
+                "咖啡爱好者",
+                true,
+            ),
+            NoteItem(
+                id = 5,
+                "https://img2.baidu.com/it/u=586058312,1869204209&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=600",
+                "咖啡拉花教程",
+                "https://img2.baidu.com/it/u=586058312,1869204209&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=600",
+                "咖啡爱好者",
+                true,
+            ),
+            NoteItem(
+                id = 6,
+                "https://img0.baidu.com/it/u=2707386529,1220667635&fm=253&fmt=auto&app=120&f=JPEG?w=889&h=500",
+                "咖啡拉花教程",
+                "https://img2.baidu.com/it/u=586058312,1869204209&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=600",
+                "咖啡爱好者",
+                true,
+            ),
+            NoteItem(
+                id = 7,
+                "https://img2.baidu.com/it/u=586058312,1869204209&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=600",
+                "咖啡拉花教程",
+                "https://img2.baidu.com/it/u=586058312,1869204209&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=600",
+                "咖啡爱好者",
+                true,
+            ),
+            NoteItem(
+                id = 8,
+                "https://img2.baidu.com/it/u=586058312,1869204209&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=600",
+                "咖啡拉花教程",
+                "https://img2.baidu.com/it/u=586058312,1869204209&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=600",
+                "咖啡爱好者",
+                true,
+            ),
+            NoteItem(
+                id = 9,
+                "https://img0.baidu.com/it/u=2707386529,1220667635&fm=253&fmt=auto&app=120&f=JPEG?w=889&h=500",
+                "咖啡拉花教程",
+                "https://img2.baidu.com/it/u=586058312,1869204209&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=600",
+                "咖啡爱好者",
+                false,
+            ),
+            // 横图示例 (4:3)
+            NoteItem(
+                id = 10,
+                "https://img2.baidu.com/it/u=586058312,1869204209&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=600",
+                "城市夜景拍摄技巧",
+                "https://img2.baidu.com/it/u=586058312,1869204209&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=600",
+                "摄影大师",
+                true,
+            ),
+            NoteItem(
+                id = 11,
+                "https://img2.baidu.com/it/u=586058312,1869204209&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=600",
+                "健身食谱分享",
+                "https://img2.baidu.com/it/u=586058312,1869204209&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=600",
+                "健康生活",
+                true,
+            ),
+            NoteItem(
+                id = 12,
+                "https://img2.baidu.com/it/u=586058312,1869204209&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=600",
+                "健身食谱分享",
+                "https://img2.baidu.com/it/u=586058312,1869204209&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=600",
+                "健康生活",
+                true,
+            )
+//        // 更多数据...
+
+        )
+    }
+}

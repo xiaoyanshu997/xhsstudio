@@ -1,0 +1,174 @@
+package com.example.xhs
+
+import android.content.Context
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ProgressBar
+import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
+import com.facebook.drawee.backends.pipeline.Fresco
+import com.facebook.drawee.view.SimpleDraweeView
+
+
+class NoteAdapter(
+    private val recyclerView: RecyclerView,
+    private val loadMore: () -> Unit
+) : ListAdapter<NoteItem, RecyclerView.ViewHolder>(NoteDiffCallback()) {
+
+    companion object {
+        private const val VIEW_TYPE_VERTICAL = 0
+        private const val VIEW_TYPE_HORIZONTAL = 1
+        private const val VIEW_TYPE_FOOTER = 2
+    }
+
+
+    private var isLastPage = false
+    private var loadState: NoteViewModel.LoadState = NoteViewModel.LoadState.IDLE
+
+    // 线程安全的数据更新方法
+    fun submitListWithState(list: List<NoteItem>?, state: NoteViewModel.LoadState) {
+        val newList = list ?: emptyList()
+
+        // 关键：直接替换整个列表
+        submitList(newList.toList()) // 确保创建新列表实例
+
+        loadState = state
+
+        // 仅刷新页尾
+//        recyclerView.post {
+//            notifyItemChanged(itemCount - 1)
+//        }
+
+    }
+
+
+    override fun getItemViewType(position: Int): Int {
+        return if (position == itemCount - 1) VIEW_TYPE_FOOTER
+        else if (getItem(position).isVertical) VIEW_TYPE_VERTICAL
+        else VIEW_TYPE_HORIZONTAL
+    }
+
+    override fun getItemCount(): Int = super.getItemCount() + 1 // +Footer
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when (viewType) {
+            VIEW_TYPE_VERTICAL -> NoteViewHolder(
+                LayoutInflater.from(parent.context)
+                    .inflate(R.layout.item_note_vertical, parent, false)
+            )
+            VIEW_TYPE_HORIZONTAL -> NoteViewHolder(
+                LayoutInflater.from(parent.context)
+                    .inflate(R.layout.item_note_horizantal, parent, false)
+            )
+            else -> FooterViewHolder( // 底部加载布局
+                LayoutInflater.from(parent.context)
+                    .inflate(R.layout.item_loading_footer, parent, false)
+            )
+        }
+    }
+    interface OnItemClickListener {
+        fun onItemClick(position: Int)
+    }
+    private var itemClickListener: OnItemClickListener? = null
+
+    fun setOnItemClickListener(listener: OnItemClickListener) {
+        itemClickListener = listener
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when (holder) {
+            is NoteViewHolder -> {
+                // 使用安全位置防止越界
+                val safePosition = holder.bindingAdapterPosition
+                if (safePosition != RecyclerView.NO_POSITION) {
+                    holder.bind(getItem(safePosition))
+                }
+            }
+            is FooterViewHolder -> {
+                holder.bind(loadState)
+                if (position == itemCount - 1 &&
+                    loadState == NoteViewModel.LoadState.IDLE &&
+                    !isLastPage) {
+
+                    recyclerView.post {
+                        loadMore() // 触发加载更多
+                    }
+                }
+            }
+        }
+    }
+
+    // 绑定视图的ViewHolder
+    inner class NoteViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        init {
+            // 在构造函数中绑定点击事件
+            itemView.setOnClickListener {
+                val pos = bindingAdapterPosition
+                if (pos != RecyclerView.NO_POSITION && pos < itemCount - 1) {
+                    itemClickListener?.onItemClick(pos)
+                }
+            }
+        }
+
+
+
+        private val ivCover: SimpleDraweeView = view.findViewById(R.id.ivCover)
+        private val tvTitle: TextView = view.findViewById(R.id.tvTitle)
+        private val ivAvatar: SimpleDraweeView = view.findViewById(R.id.ivAvatar)
+        private val tvUsername: TextView = view.findViewById(R.id.tvUsername)
+
+        fun bind(item: NoteItem) {
+            // 动态设置高度（瀑布流关键）
+            val layoutParams = ivCover.layoutParams
+            layoutParams.height = calculateHeight(itemView.context, item.aspectRatio)
+            ivCover.layoutParams = layoutParams
+
+            // 绑定数据
+            ivCover.setImageURI(item.coverUrl)
+            tvTitle.text = item.title
+            ivAvatar.setImageURI(item.avatarUrl)
+            tvUsername.text = item.username
+
+            ivCover.controller = Fresco.newDraweeControllerBuilder()
+                .setUri(item.coverUrl)
+                .setAutoPlayAnimations(false)
+                .setOldController(ivCover.controller)
+                .build()
+        }
+
+        // 根据屏幕宽度计算Item高度
+        private fun calculateHeight(context: Context, ratio: Float): Int {
+            val displayMetrics = context.resources.displayMetrics
+            val density = displayMetrics.density
+            val spacingPx = (32 * density).toInt()
+            val itemWidth = (displayMetrics.widthPixels - spacingPx) / 2
+            return (itemWidth * ratio).toInt()
+        }
+
+
+
+    }
+
+    // 底部加载ViewHolder
+    inner class FooterViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        fun bind(state: NoteViewModel.LoadState) {
+            itemView.findViewById<ProgressBar>(R.id.progress_bar).visibility =
+                if (state == NoteViewModel.LoadState.LOADING_MORE) View.VISIBLE else View.GONE
+            itemView.findViewById<TextView>(R.id.text_complete).visibility =
+                if (state == NoteViewModel.LoadState.COMPLETE) View.VISIBLE else View.GONE
+        }
+    }
+
+    // DiffUtil优化（确保数据一致性）
+    class NoteDiffCallback : DiffUtil.ItemCallback<NoteItem>() {
+        override fun areItemsTheSame(oldItem: NoteItem, newItem: NoteItem): Boolean {
+            return oldItem.id == newItem.id
+        }
+        override fun areContentsTheSame(oldItem: NoteItem, newItem: NoteItem): Boolean {
+            return oldItem == newItem
+        }
+    }
+}
